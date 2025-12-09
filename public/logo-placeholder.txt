@@ -1,0 +1,2 @@
+Please replace this file with your actual logo.png file.
+The logo should be placed in: ayurveda-ui/public/logo.png
