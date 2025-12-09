@@ -9,55 +9,45 @@ const Login = () => {
   const [authState, setAuthState] = useState<{ authenticated: boolean; isAdmin?: boolean; user?: any } | null>(null);
 
   useEffect(() => {
-    const checkAuth = async (retry = 0) => {
-      // Force refresh to avoid cached false negatives
-      const auth = await checkAdminAuth(retry === 0);
-      setAuthState(auth);
-      
-      const error = searchParams.get('error');
-      
-      // If user is authenticated, redirect based on role
-      if (auth.authenticated) {
+    const checkAuth = async () => {
+      try {
+        // Force refresh to avoid cached false negatives
+        const auth = await checkAdminAuth(true);
+        setAuthState(auth);
         setIsChecking(false);
-        if (error) {
-          // If there was an error but user is authenticated, redirect based on role
+        
+        const error = searchParams.get('error');
+        
+        // If user is authenticated, redirect based on role
+        if (auth.authenticated) {
+          console.log('[Login] User authenticated, redirecting:', { isAdmin: auth.isAdmin, error });
           if (auth.isAdmin) {
-            navigate('/admin/dashboard');
+            navigate('/admin/dashboard', { replace: true });
           } else {
-            navigate('/');
+            navigate('/', { replace: true });
           }
         } else {
-          // Normal successful authentication - redirect based on role
-          if (auth.isAdmin) {
-            navigate('/admin/dashboard');
+          // If not authenticated and there's an error, show error message
+          if (error) {
+            console.log('[Login] Authentication failed with error:', error);
           } else {
-            navigate('/');
+            console.log('[Login] User not authenticated, showing login button');
           }
         }
-      } else {
-        // If not authenticated, check if we just came from OAuth callback
-        // Wait a bit for cookie to be available (cross-origin cookie timing)
-        if (retry < 2 && !error) {
-          console.log(`[Login] Auth check failed, retrying... (attempt ${retry + 1})`);
-          setTimeout(() => {
-            checkAuth(retry + 1);
-          }, 500);
-          return;
-        }
+      } catch (error) {
+        console.error('[Login] Error checking auth:', error);
         setIsChecking(false);
       }
     };
     
-    // Small delay to allow cookie to be set after OAuth redirect
-    const timer = setTimeout(() => {
-      checkAuth();
-    }, 200);
-    
-    return () => clearTimeout(timer);
+    checkAuth();
   }, [navigate, searchParams]);
 
   const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/auth/google`;
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const loginUrl = `${apiUrl}/api/auth/google`;
+    console.log('[Login] Redirecting to OAuth:', loginUrl);
+    window.location.href = loginUrl;
   };
 
   const error = searchParams.get('error');
@@ -111,7 +101,7 @@ const Login = () => {
           </div>
         )}
         
-        {!isChecking && !authState?.authenticated && (
+        {(!isChecking && !authState?.authenticated) && (
           <button
             onClick={handleGoogleLogin}
             className="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-secondary transition-colors flex items-center justify-center"
