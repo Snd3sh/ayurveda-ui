@@ -1,9 +1,28 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Leaf, Heart, Shield, Play, Zap } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { clearAuthCache } from '../utils/adminAuth';
 
 const Home = () => {
   const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
+
+  // Check for token in URL (from OAuth callback for non-admin users)
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tokenFromUrl = urlParams.get('token');
+    
+    if (tokenFromUrl) {
+      console.log('[Home] 🔑 Token found in URL, storing in localStorage');
+      localStorage.setItem('auth_token', tokenFromUrl);
+      console.log('[Home] ✅ Token stored in localStorage');
+      
+      // Remove token from URL
+      window.history.replaceState({}, '', '/');
+      
+      // Clear auth cache to force fresh check
+      clearAuthCache();
+    }
+  }, []);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {

@@ -1,22 +1,44 @@
 import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import { checkAdminAuth } from '../utils/adminAuth';
+import { Navigate, useLocation } from 'react-router-dom';
+import { checkAdminAuth, clearAuthCache } from '../utils/adminAuth';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+  const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
+    // FIRST: Check if we have a token in URL (from OAuth callback)
+    // This must happen BEFORE auth check, otherwise token is lost on redirect
+    const urlParams = new URLSearchParams(location.search);
+    const tokenFromUrl = urlParams.get('token');
+    
+    if (tokenFromUrl) {
+      console.log('[ProtectedRoute] 🔑 Token found in URL, storing in localStorage');
+      console.log('[ProtectedRoute] Token length:', tokenFromUrl.length);
+      
+      // Store token in localStorage immediately
+      localStorage.setItem('auth_token', tokenFromUrl);
+      console.log('[ProtectedRoute] ✅ Token stored in localStorage');
+      
+      // Remove token from URL immediately (clean URL)
+      window.history.replaceState({}, '', location.pathname);
+      
+      // Clear auth cache to force fresh check
+      clearAuthCache();
+    }
+    
     // Check if we might be coming from an OAuth redirect
     // OAuth redirects often happen right after page load
     const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
     const isLikelyOAuthRedirect = document.referrer.includes('accounts.google.com') || 
                                    document.referrer.includes('api-kritiayurveda') ||
+                                   !!tokenFromUrl ||
                                    (navEntry?.type === 'reload' || navEntry?.type === 'navigate');
     
     const verifyAuth = async (retry = 0) => {
@@ -59,7 +81,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     }, initialDelay);
     
     return () => clearTimeout(timer);
-  }, []);
+  }, [location.search]); // Re-run if URL params change (e.g., token appears)
 
   if (isAuthenticated === null) {
     return (
@@ -74,7 +96,11 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   // Only allow authenticated admin users to access admin pages
   if (!isAuthenticated) {
     console.log('[ProtectedRoute] User not authenticated, redirecting to login');
-    return <Navigate to="/login" replace />;
+    // Preserve any token in URL when redirecting to login
+    const urlParams = new URLSearchParams(location.search);
+    const token = urlParams.get('token');
+    const loginPath = token ? `/login?token=${encodeURIComponent(token)}` : '/login';
+    return <Navigate to={loginPath} replace />;
   }
 
   if (!isAdmin) {
