@@ -26,12 +26,18 @@ export const checkAdminAuth = async (forceRefresh = false): Promise<{
   }
   
   try {
+    // Check if cookies are enabled (basic check)
+    if (!navigator.cookieEnabled) {
+      console.warn('[checkAdminAuth] Cookies are disabled in browser!');
+    }
+    
     const auth = await authApi.getMe();
     console.log('[checkAdminAuth] Auth result:', {
       authenticated: auth.authenticated,
       isAdmin: auth.isAdmin,
       email: auth.user?.email,
       forceRefresh,
+      cookiesEnabled: navigator.cookieEnabled,
     });
     
     // Only cache successful authentications, not failures
@@ -43,8 +49,20 @@ export const checkAdminAuth = async (forceRefresh = false): Promise<{
       cachedAuth = null;
     }
     return auth;
-  } catch (error) {
+  } catch (error: any) {
     console.error('[checkAdminAuth] Error checking auth:', error);
+    
+    // Log more details about the error
+    if (error.response) {
+      console.error('[checkAdminAuth] API Error:', {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data,
+      });
+    } else if (error.request) {
+      console.error('[checkAdminAuth] Network Error - No response received:', error.message);
+    }
+    
     cachedAuth = null; // Clear cache on error
     return { authenticated: false };
   }

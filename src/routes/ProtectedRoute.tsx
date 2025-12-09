@@ -12,6 +12,12 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
+    // Check if we might be coming from an OAuth redirect
+    // OAuth redirects often happen right after page load
+    const isLikelyOAuthRedirect = document.referrer.includes('accounts.google.com') || 
+                                   document.referrer.includes('api-kritiayurveda') ||
+                                   performance.getEntriesByType('navigation')[0]?.type === 'reload';
+    
     const verifyAuth = async (retry = 0) => {
       // Force refresh on first check and retries to avoid cached false negatives
       const auth = await checkAdminAuth(retry === 0);
@@ -19,9 +25,11 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
       // If not authenticated and we haven't retried yet, wait a bit and retry
       // This handles the case where cookie might not be immediately available after OAuth redirect
       // Increase retries and delay for cross-origin cookie timing
-      if (!auth.authenticated && retry < 3) {
-        const delay = retry === 0 ? 1000 : 500; // Wait 1s on first retry, 500ms on subsequent
-        console.log(`[ProtectedRoute] Auth check failed, retrying in ${delay}ms... (attempt ${retry + 1}/3)`);
+      if (!auth.authenticated && retry < 5) {
+        // Longer delays for OAuth redirects (cross-origin cookies take time)
+        const baseDelay = isLikelyOAuthRedirect ? 1500 : 500;
+        const delay = retry === 0 ? baseDelay : Math.min(baseDelay, 1000);
+        console.log(`[ProtectedRoute] Auth check failed, retrying in ${delay}ms... (attempt ${retry + 1}/5, likelyOAuth: ${isLikelyOAuthRedirect})`);
         setTimeout(() => {
           verifyAuth(retry + 1);
           setRetryCount(retry + 1);
@@ -34,16 +42,20 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         isAdmin: auth.isAdmin,
         email: auth.user?.email,
         retries: retry,
+        likelyOAuth: isLikelyOAuthRedirect,
       });
       
       setIsAuthenticated(auth.authenticated);
       setIsAdmin(auth.isAdmin || false);
     };
     
-    // Small initial delay to allow cookie to be set after OAuth redirect
+    // Longer initial delay if coming from OAuth redirect (cross-origin cookie timing)
+    const initialDelay = isLikelyOAuthRedirect ? 500 : 100;
+    console.log(`[ProtectedRoute] Starting auth check (initial delay: ${initialDelay}ms, likelyOAuth: ${isLikelyOAuthRedirect})`);
+    
     const timer = setTimeout(() => {
       verifyAuth();
-    }, 100);
+    }, initialDelay);
     
     return () => clearTimeout(timer);
   }, []);

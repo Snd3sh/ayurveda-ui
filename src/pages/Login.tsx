@@ -9,17 +9,22 @@ const Login = () => {
   const [authState, setAuthState] = useState<{ authenticated: boolean; isAdmin?: boolean; user?: any } | null>(null);
 
   useEffect(() => {
-    const checkAuth = async () => {
+    // Check if we might be coming from an OAuth redirect
+    const isLikelyOAuthRedirect = document.referrer.includes('accounts.google.com') || 
+                                   document.referrer.includes('api-kritiayurveda') ||
+                                   window.location.search.includes('code=');
+    
+    const checkAuth = async (retry = 0) => {
       try {
         // Force refresh to avoid cached false negatives
-        const auth = await checkAdminAuth(true);
+        const auth = await checkAdminAuth(retry === 0);
         setAuthState(auth);
-        setIsChecking(false);
         
         const error = searchParams.get('error');
         
         // If user is authenticated, redirect based on role
         if (auth.authenticated) {
+          setIsChecking(false);
           console.log('[Login] User authenticated, redirecting:', { isAdmin: auth.isAdmin, error });
           if (auth.isAdmin) {
             navigate('/admin/dashboard', { replace: true });
@@ -27,6 +32,17 @@ const Login = () => {
             navigate('/', { replace: true });
           }
         } else {
+          // If not authenticated, retry if we might be coming from OAuth (cookie timing)
+          if (!auth.authenticated && retry < 3 && isLikelyOAuthRedirect && !error) {
+            const delay = retry === 0 ? 1000 : 500;
+            console.log(`[Login] Auth check failed, retrying in ${delay}ms... (attempt ${retry + 1}/3, likelyOAuth: ${isLikelyOAuthRedirect})`);
+            setTimeout(() => {
+              checkAuth(retry + 1);
+            }, delay);
+            return;
+          }
+          
+          setIsChecking(false);
           // If not authenticated and there's an error, show error message
           if (error) {
             console.log('[Login] Authentication failed with error:', error);
@@ -40,7 +56,15 @@ const Login = () => {
       }
     };
     
-    checkAuth();
+    // Longer initial delay if coming from OAuth redirect
+    const initialDelay = isLikelyOAuthRedirect ? 300 : 0;
+    console.log(`[Login] Starting auth check (initial delay: ${initialDelay}ms, likelyOAuth: ${isLikelyOAuthRedirect})`);
+    
+    const timer = setTimeout(() => {
+      checkAuth();
+    }, initialDelay);
+    
+    return () => clearTimeout(timer);
   }, [navigate, searchParams]);
 
   const handleGoogleLogin = () => {
