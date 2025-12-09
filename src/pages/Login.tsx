@@ -9,10 +9,38 @@ const Login = () => {
   const [authState, setAuthState] = useState<{ authenticated: boolean; isAdmin?: boolean; user?: any } | null>(null);
 
   useEffect(() => {
+    // Check if we have a token in URL (fallback from OAuth)
+    const urlParams = new URLSearchParams(window.location.search);
+    const tokenFromUrl = urlParams.get('token');
+    
+    // If token is in URL, send it to backend to set as cookie
+    if (tokenFromUrl) {
+      console.log('[Login] Token found in URL, setting cookie via API');
+      // Remove token from URL immediately
+      window.history.replaceState({}, '', window.location.pathname);
+      
+      // Set cookie via API call
+      fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/auth/set-token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ token: tokenFromUrl }),
+      })
+        .then(() => {
+          console.log('[Login] Token cookie set via API');
+          // Clear cache and check auth
+          clearAuthCache();
+        })
+        .catch((error) => {
+          console.error('[Login] Failed to set token cookie:', error);
+        });
+    }
+    
     // Check if we might be coming from an OAuth redirect
     const isLikelyOAuthRedirect = document.referrer.includes('accounts.google.com') || 
                                    document.referrer.includes('api-kritiayurveda') ||
-                                   window.location.search.includes('code=');
+                                   window.location.search.includes('code=') ||
+                                   !!tokenFromUrl;
     
     // Clear auth cache if coming from OAuth redirect (fresh start)
     if (isLikelyOAuthRedirect) {
