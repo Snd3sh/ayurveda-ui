@@ -70,7 +70,14 @@ export const checkAdminAuth = async (forceRefresh = false): Promise<{
 
 export const clearAuthCache = (): void => {
   cachedAuth = null;
+  console.log('[clearAuthCache] Auth cache cleared');
 };
+
+// Make it available globally for debugging
+if (typeof window !== 'undefined') {
+  (window as any).clearAuthCache = clearAuthCache;
+  console.log('[adminAuth] clearAuthCache() is now available in console. Run: clearAuthCache()');
+}
 
 export const logout = async (): Promise<void> => {
   await authApi.logout();

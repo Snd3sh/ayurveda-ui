@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { checkAdminAuth } from '../utils/adminAuth';
+import { checkAdminAuth, clearAuthCache } from '../utils/adminAuth';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,6 +13,12 @@ const Login = () => {
     const isLikelyOAuthRedirect = document.referrer.includes('accounts.google.com') || 
                                    document.referrer.includes('api-kritiayurveda') ||
                                    window.location.search.includes('code=');
+    
+    // Clear auth cache if coming from OAuth redirect (fresh start)
+    if (isLikelyOAuthRedirect) {
+      console.log('[Login] Detected OAuth redirect, clearing auth cache');
+      clearAuthCache();
+    }
     
     const checkAuth = async (retry = 0) => {
       try {
