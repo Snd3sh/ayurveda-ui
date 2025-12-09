@@ -13,37 +13,20 @@ const Login = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const tokenFromUrl = urlParams.get('token');
     
-    // If token is in URL, send it to backend to set as cookie
+    // If token is in URL, store it in localStorage (for cross-origin cookie issues)
     if (tokenFromUrl) {
-      console.log('[Login] 🔑 Token found in URL, setting cookie via API');
+      console.log('[Login] 🔑 Token found in URL, storing in localStorage');
       console.log('[Login] Token length:', tokenFromUrl.length);
+      
+      // Store token in localStorage (works across domains)
+      localStorage.setItem('auth_token', tokenFromUrl);
+      console.log('[Login] ✅ Token stored in localStorage');
       
       // Remove token from URL immediately
       window.history.replaceState({}, '', window.location.pathname);
       
-      // Set cookie via API call
-      fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/auth/set-token`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ token: tokenFromUrl }),
-      })
-        .then(async (response) => {
-          const data = await response.json();
-          console.log('[Login] Set-token API response:', data);
-          if (data.success) {
-            console.log('[Login] ✅ Token cookie set via API');
-            // Wait a bit for cookie to be set, then clear cache and check auth
-            setTimeout(() => {
-              clearAuthCache();
-            }, 500);
-          } else {
-            console.error('[Login] ❌ Failed to set token cookie:', data.message);
-          }
-        })
-        .catch((error) => {
-          console.error('[Login] ❌ Error setting token cookie:', error);
-        });
+      // Clear cache and check auth immediately
+      clearAuthCache();
     }
     
     // Check if we might be coming from an OAuth redirect

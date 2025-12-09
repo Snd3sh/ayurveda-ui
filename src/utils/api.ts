@@ -10,6 +10,27 @@ const apiClient = axios.create({
   },
 });
 
+// Add interceptor to include token from localStorage in Authorization header
+apiClient.interceptors.request.use(
+  (config) => {
+    // Get token from localStorage (for cross-origin cookie issues)
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+      // Log only for auth endpoints to avoid spam
+      if (config.url?.includes('/auth/')) {
+        console.log('[apiClient] Adding Authorization header to request:', config.url);
+      }
+    } else if (config.url?.includes('/auth/me')) {
+      console.warn('[apiClient] No token in localStorage for auth request');
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;

@@ -85,26 +85,38 @@ if (typeof window !== 'undefined') {
   (window as any).testAuth = async () => {
     console.log('=== Testing Authentication ===');
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const token = localStorage.getItem('auth_token');
     
-    // Test 1: Check test-cookie endpoint
-    console.log('Test 1: Testing cookie setting...');
+    console.log('Token in localStorage:', token ? `Found (${token.length} chars)` : 'Not found');
+    
+    // Test 1: Check /me endpoint with Authorization header
+    console.log('Test 1: Checking auth status with Authorization header...');
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    const authCheck = await fetch(`${apiUrl}/api/auth/me`, {
+      credentials: 'include',
+      headers,
+    }).then(r => r.json());
+    console.log('Auth check response:', authCheck);
+    
+    // Test 2: Check test-cookie endpoint (for cookie testing)
+    console.log('Test 2: Testing cookie setting...');
     const testCookie = await fetch(`${apiUrl}/api/auth/test-cookie`, {
       credentials: 'include'
     }).then(r => r.json());
     console.log('Test cookie response:', testCookie);
     
-    // Test 2: Check /me endpoint
-    console.log('Test 2: Checking auth status...');
-    const authCheck = await fetch(`${apiUrl}/api/auth/me`, {
-      credentials: 'include'
-    }).then(r => r.json());
-    console.log('Auth check response:', authCheck);
-    
     // Test 3: Check cookies in browser
     console.log('Test 3: Check Application → Cookies in DevTools');
     console.log('Cookies enabled:', navigator.cookieEnabled);
+    console.log('localStorage token:', token ? '✅ Present' : '❌ Missing');
     
-    return { testCookie, authCheck };
+    return { testCookie, authCheck, hasToken: !!token };
   };
   console.log('[adminAuth] Debug functions available:');
   console.log('  - clearAuthCache() - Clear auth cache');
@@ -112,6 +124,13 @@ if (typeof window !== 'undefined') {
 }
 
 export const logout = async (): Promise<void> => {
-  await authApi.logout();
+  try {
+    await authApi.logout();
+  } catch (error) {
+    console.error('[logout] Error calling logout API:', error);
+  }
+  // Clear localStorage token (for cross-origin scenarios)
+  localStorage.removeItem('auth_token');
   clearAuthCache();
+  console.log('[logout] ✅ Logged out - cleared token and cache');
 };
