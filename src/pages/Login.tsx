@@ -15,7 +15,9 @@ const Login = () => {
     
     // If token is in URL, send it to backend to set as cookie
     if (tokenFromUrl) {
-      console.log('[Login] Token found in URL, setting cookie via API');
+      console.log('[Login] 🔑 Token found in URL, setting cookie via API');
+      console.log('[Login] Token length:', tokenFromUrl.length);
+      
       // Remove token from URL immediately
       window.history.replaceState({}, '', window.location.pathname);
       
@@ -26,13 +28,21 @@ const Login = () => {
         credentials: 'include',
         body: JSON.stringify({ token: tokenFromUrl }),
       })
-        .then(() => {
-          console.log('[Login] Token cookie set via API');
-          // Clear cache and check auth
-          clearAuthCache();
+        .then(async (response) => {
+          const data = await response.json();
+          console.log('[Login] Set-token API response:', data);
+          if (data.success) {
+            console.log('[Login] ✅ Token cookie set via API');
+            // Wait a bit for cookie to be set, then clear cache and check auth
+            setTimeout(() => {
+              clearAuthCache();
+            }, 500);
+          } else {
+            console.error('[Login] ❌ Failed to set token cookie:', data.message);
+          }
         })
         .catch((error) => {
-          console.error('[Login] Failed to set token cookie:', error);
+          console.error('[Login] ❌ Error setting token cookie:', error);
         });
     }
     

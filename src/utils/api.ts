@@ -69,18 +69,37 @@ export const orderApi = {
 export const authApi = {
   getMe: async (): Promise<{ authenticated: boolean; isAdmin?: boolean; user?: any }> => {
     try {
+      console.log('[authApi.getMe] Making request to /api/auth/me');
+      console.log('[authApi.getMe] API URL:', apiClient.defaults.baseURL);
+      console.log('[authApi.getMe] withCredentials:', apiClient.defaults.withCredentials);
+      
       const response = await apiClient.get('/api/auth/me');
+      console.log('[authApi.getMe] Response received:', {
+        status: response.status,
+        data: response.data,
+        headers: response.headers,
+      });
       return response.data;
     } catch (error: any) {
       // Log error details for debugging
+      console.error('[authApi.getMe] ===== ERROR DETAILS =====');
       if (error.response) {
         console.error('[authApi.getMe] API error:', {
           status: error.response.status,
+          statusText: error.response.statusText,
           data: error.response.data,
+          headers: error.response.headers,
+        });
+      } else if (error.request) {
+        console.error('[authApi.getMe] Network error - No response:', {
+          message: error.message,
+          request: error.request,
         });
       } else {
-        console.error('[authApi.getMe] Network error:', error.message);
+        console.error('[authApi.getMe] Error:', error.message);
       }
+      console.error('[authApi.getMe] Full error:', error);
+      console.error('[authApi.getMe] ===== END ERROR =====');
       return { authenticated: false };
     }
   },
