@@ -14,9 +14,10 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   useEffect(() => {
     // Check if we might be coming from an OAuth redirect
     // OAuth redirects often happen right after page load
+    const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
     const isLikelyOAuthRedirect = document.referrer.includes('accounts.google.com') || 
                                    document.referrer.includes('api-kritiayurveda') ||
-                                   performance.getEntriesByType('navigation')[0]?.type === 'reload';
+                                   (navEntry?.type === 'reload' || navEntry?.type === 'navigate');
     
     const verifyAuth = async (retry = 0) => {
       // Force refresh on first check and retries to avoid cached false negatives
