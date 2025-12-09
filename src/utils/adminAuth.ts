@@ -10,18 +10,32 @@ export interface AdminUser {
 
 let cachedAuth: { authenticated: boolean; isAdmin?: boolean; user?: AdminUser } | null = null;
 
-export const checkAdminAuth = async (): Promise<{
+export const checkAdminAuth = async (forceRefresh = false): Promise<{
   authenticated: boolean;
   isAdmin?: boolean;
   user?: AdminUser;
 }> => {
+  // Clear cache if force refresh is requested (useful after login)
+  if (forceRefresh) {
+    cachedAuth = null;
+  }
+  
   if (cachedAuth) {
     return cachedAuth;
   }
   
-  const auth = await authApi.getMe();
-  cachedAuth = auth;
-  return auth;
+  try {
+    const auth = await authApi.getMe();
+    // Only cache successful authentications, not failures
+    // This prevents caching "not authenticated" when cookie might not be immediately available
+    if (auth.authenticated) {
+      cachedAuth = auth;
+    }
+    return auth;
+  } catch (error) {
+    console.error('[checkAdminAuth] Error checking auth:', error);
+    return { authenticated: false };
+  }
 };
 
 export const clearAuthCache = (): void => {
