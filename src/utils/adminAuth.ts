@@ -20,20 +20,32 @@ export const checkAdminAuth = async (forceRefresh = false): Promise<{
     cachedAuth = null;
   }
   
-  if (cachedAuth) {
+  // Don't use cache if force refresh is requested
+  if (cachedAuth && !forceRefresh) {
     return cachedAuth;
   }
   
   try {
     const auth = await authApi.getMe();
+    console.log('[checkAdminAuth] Auth result:', {
+      authenticated: auth.authenticated,
+      isAdmin: auth.isAdmin,
+      email: auth.user?.email,
+      forceRefresh,
+    });
+    
     // Only cache successful authentications, not failures
     // This prevents caching "not authenticated" when cookie might not be immediately available
     if (auth.authenticated) {
       cachedAuth = auth;
+    } else {
+      // Clear cache on failure to allow retries
+      cachedAuth = null;
     }
     return auth;
   } catch (error) {
     console.error('[checkAdminAuth] Error checking auth:', error);
+    cachedAuth = null; // Clear cache on error
     return { authenticated: false };
   }
 };

@@ -71,7 +71,16 @@ export const authApi = {
     try {
       const response = await apiClient.get('/api/auth/me');
       return response.data;
-    } catch {
+    } catch (error: any) {
+      // Log error details for debugging
+      if (error.response) {
+        console.error('[authApi.getMe] API error:', {
+          status: error.response.status,
+          data: error.response.data,
+        });
+      } else {
+        console.error('[authApi.getMe] Network error:', error.message);
+      }
       return { authenticated: false };
     }
   },

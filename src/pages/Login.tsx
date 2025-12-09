@@ -9,15 +9,16 @@ const Login = () => {
   const [authState, setAuthState] = useState<{ authenticated: boolean; isAdmin?: boolean; user?: any } | null>(null);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const auth = await checkAdminAuth();
+    const checkAuth = async (retry = 0) => {
+      // Force refresh to avoid cached false negatives
+      const auth = await checkAdminAuth(retry === 0);
       setAuthState(auth);
-      setIsChecking(false);
       
       const error = searchParams.get('error');
       
       // If user is authenticated, redirect based on role
       if (auth.authenticated) {
+        setIsChecking(false);
         if (error) {
           // If there was an error but user is authenticated, redirect based on role
           if (auth.isAdmin) {
@@ -33,9 +34,26 @@ const Login = () => {
             navigate('/');
           }
         }
+      } else {
+        // If not authenticated, check if we just came from OAuth callback
+        // Wait a bit for cookie to be available (cross-origin cookie timing)
+        if (retry < 2 && !error) {
+          console.log(`[Login] Auth check failed, retrying... (attempt ${retry + 1})`);
+          setTimeout(() => {
+            checkAuth(retry + 1);
+          }, 500);
+          return;
+        }
+        setIsChecking(false);
       }
     };
-    checkAuth();
+    
+    // Small delay to allow cookie to be set after OAuth redirect
+    const timer = setTimeout(() => {
+      checkAuth();
+    }, 200);
+    
+    return () => clearTimeout(timer);
   }, [navigate, searchParams]);
 
   const handleGoogleLogin = () => {

@@ -18,12 +18,14 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
       
       // If not authenticated and we haven't retried yet, wait a bit and retry
       // This handles the case where cookie might not be immediately available after OAuth redirect
-      if (!auth.authenticated && retry < 2) {
-        console.log(`[ProtectedRoute] Auth check failed, retrying... (attempt ${retry + 1})`);
+      // Increase retries and delay for cross-origin cookie timing
+      if (!auth.authenticated && retry < 3) {
+        const delay = retry === 0 ? 1000 : 500; // Wait 1s on first retry, 500ms on subsequent
+        console.log(`[ProtectedRoute] Auth check failed, retrying in ${delay}ms... (attempt ${retry + 1}/3)`);
         setTimeout(() => {
           verifyAuth(retry + 1);
           setRetryCount(retry + 1);
-        }, 500); // Wait 500ms before retry
+        }, delay);
         return;
       }
       
@@ -31,12 +33,19 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         authenticated: auth.authenticated,
         isAdmin: auth.isAdmin,
         email: auth.user?.email,
+        retries: retry,
       });
       
       setIsAuthenticated(auth.authenticated);
       setIsAdmin(auth.isAdmin || false);
     };
-    verifyAuth();
+    
+    // Small initial delay to allow cookie to be set after OAuth redirect
+    const timer = setTimeout(() => {
+      verifyAuth();
+    }, 100);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   if (isAuthenticated === null) {
