@@ -53,94 +53,94 @@ const ProductDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-primary text-xl font-semibold">Loading product...</div>
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900 py-20">
+        <div className="text-primary text-xl font-medium">Loading product...</div>
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-red-500 text-xl font-semibold">Product not found</div>
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900 py-20">
+        <div className="text-red-500 text-xl font-medium">Product not found</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div className="min-h-screen bg-white dark:bg-gray-900 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <button
           onClick={() => navigate(-1)}
-          className="mb-6 flex items-center text-primary hover:text-secondary transition-colors font-semibold"
+          className="mb-8 flex items-center text-gray-600 dark:text-gray-400 hover:text-primary transition-colors font-medium"
         >
           <ArrowLeft className="w-5 h-5 mr-2" />
           Back to Products
         </button>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
-            <div className="relative overflow-hidden rounded-xl">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 p-8 md:p-12">
+            <div className="relative overflow-hidden rounded-2xl bg-gray-50 dark:bg-gray-900">
               <img
                 src={product.image}
                 alt={product.name}
-                className="w-full h-96 object-cover rounded-xl shadow-lg"
+                className="w-full h-full min-h-[400px] object-cover"
               />
             </div>
-            <div>
-              <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">{product.name}</h1>
-              <p className="text-3xl font-bold text-primary mb-6">₹{product.price}</p>
-              <div className="mb-6">
-                <h3 className="font-semibold mb-3 text-lg text-gray-900 dark:text-white">Description</h3>
-                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{product.description}</p>
+            <div className="space-y-6">
+              <div>
+                <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">{product.name}</h1>
+                <p className="text-3xl font-bold text-primary mb-6">₹{product.price}</p>
               </div>
-              <div className="mb-6">
-                <span className="inline-block bg-emerald-100 dark:bg-emerald-900 text-primary px-4 py-2 rounded-full text-sm font-semibold">
+              <div>
+                <span className="inline-block bg-teal-50 dark:bg-teal-900/20 text-primary px-4 py-2 rounded-lg text-sm font-semibold border border-teal-100 dark:border-teal-800/50">
                   {product.category}
                 </span>
               </div>
-              <div className="mb-6">
+              <div>
+                <h3 className="font-semibold mb-3 text-lg text-gray-900 dark:text-white">Description</h3>
+                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{product.description}</p>
+              </div>
+              <div>
                 <label className="block font-semibold mb-3 text-gray-900 dark:text-white">Quantity</label>
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center gap-4">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-12 h-12 border-2 border-primary text-primary rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors font-bold"
+                    className="w-12 h-12 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-semibold"
                   >
                     -
                   </button>
                   <span className="text-xl font-semibold text-gray-900 dark:text-white w-12 text-center">{quantity}</span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="w-12 h-12 border-2 border-primary text-primary rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors font-bold"
+                    className="w-12 h-12 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-semibold"
                   >
                     +
                   </button>
                 </div>
               </div>
               {product.stock > 0 ? (
-                <>
-                  <button
-                    onClick={handleAddToCart}
-                    disabled={showSuccess}
-                    className="w-full bg-primary text-white py-4 rounded-lg font-semibold hover:bg-secondary transition-all duration-200 flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-105 transform disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                  >
-                    {showSuccess ? (
-                      <>
-                        <CheckCircle2 className="w-5 h-5 mr-2" />
-                        Added to Cart!
-                      </>
-                    ) : (
-                      <>
-                        <ShoppingCart className="w-5 h-5 mr-2" />
-                        Add to Cart
-                      </>
-                    )}
-                  </button>
-                </>
+                <button
+                  onClick={handleAddToCart}
+                  disabled={showSuccess}
+                  className="w-full bg-primary text-white py-4 rounded-xl font-semibold hover:bg-secondary transition-all duration-200 flex items-center justify-center shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {showSuccess ? (
+                    <>
+                      <CheckCircle2 className="w-5 h-5 mr-2" />
+                      Added to Cart!
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="w-5 h-5 mr-2" />
+                      Add to Cart
+                    </>
+                  )}
+                </button>
               ) : (
                 <button
                   disabled
-                  className="w-full bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 py-4 rounded-lg font-semibold cursor-not-allowed"
+                  className="w-full bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 py-4 rounded-xl font-semibold cursor-not-allowed"
                 >
                   Out of Stock
                 </button>

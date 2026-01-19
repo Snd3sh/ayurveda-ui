@@ -57,9 +57,9 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50 border-b border-gray-100 dark:border-gray-800">
+    <nav className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200/50 dark:border-gray-800/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group hover:opacity-80 transition-opacity">
             <img 
@@ -74,43 +74,53 @@ const Navbar = () => {
           </Link>
 
           {/* Centered Navigation Links */}
-          <div className="hidden md:flex items-center space-x-8 absolute left-1/2 transform -translate-x-1/2">
+          <div className="hidden md:flex items-center space-x-1 absolute left-1/2 transform -translate-x-1/2">
             <Link
               to="/"
-              className={`text-gray-700 dark:text-gray-300 hover:text-primary transition-colors font-medium ${
-                isActive('/') ? 'text-primary' : ''
+              className={`px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
+                isActive('/') 
+                  ? 'text-primary bg-teal-50 dark:bg-teal-900/20' 
+                  : 'text-gray-700 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50'
               }`}
             >
               Home
             </Link>
             <Link
               to="/products"
-              className={`text-gray-700 dark:text-gray-300 hover:text-primary transition-colors font-medium ${
-                isActive('/products') ? 'text-primary' : ''
+              className={`px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
+                isActive('/products') 
+                  ? 'text-primary bg-teal-50 dark:bg-teal-900/20' 
+                  : 'text-gray-700 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50'
               }`}
             >
               Shop
             </Link>
             <Link
               to="/track-order"
-              className={`text-gray-700 dark:text-gray-300 hover:text-primary transition-colors font-medium ${
-                isActive('/track-order') ? 'text-primary' : ''
+              className={`px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
+                isActive('/track-order') 
+                  ? 'text-primary bg-teal-50 dark:bg-teal-900/20' 
+                  : 'text-gray-700 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50'
               }`}
             >
               Track Order
             </Link>
             <Link
               to="/about"
-              className={`text-gray-700 dark:text-gray-300 hover:text-primary transition-colors font-medium ${
-                isActive('/about') ? 'text-primary' : ''
+              className={`px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
+                isActive('/about') 
+                  ? 'text-primary bg-teal-50 dark:bg-teal-900/20' 
+                  : 'text-gray-700 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50'
               }`}
             >
               About
             </Link>
             <Link
               to="/contact"
-              className={`text-gray-700 dark:text-gray-300 hover:text-primary transition-colors font-medium ${
-                isActive('/contact') ? 'text-primary' : ''
+              className={`px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
+                isActive('/contact') 
+                  ? 'text-primary bg-teal-50 dark:bg-teal-900/20' 
+                  : 'text-gray-700 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50'
               }`}
             >
               Contact
@@ -118,7 +128,7 @@ const Navbar = () => {
           </div>
 
           {/* Right-aligned Icons */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-3">
             <button
               onClick={toggleTheme}
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300"
@@ -136,7 +146,7 @@ const Navbar = () => {
             >
               <ShoppingCart className="w-5 h-5" />
               {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">
                   {itemCount}
                 </span>
               )}
@@ -147,7 +157,7 @@ const Navbar = () => {
               <div className="relative user-menu-container">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                  className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-800 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700"
                 >
                   {authState.user?.picture ? (
                     <img
@@ -165,16 +175,16 @@ const Navbar = () => {
                 </button>
                 
                 {userMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50">
-                    <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 py-2 z-50">
+                    <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">
                         {authState.user?.name || 'User'}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         {authState.user?.email}
                       </p>
                       {authState.isAdmin && (
-                        <span className="inline-block mt-1 text-xs bg-primary text-white px-2 py-0.5 rounded">
+                        <span className="inline-block mt-2 text-xs bg-primary text-white px-2 py-1 rounded-md font-medium">
                           Admin
                         </span>
                       )}
@@ -182,7 +192,7 @@ const Navbar = () => {
                     {authState.isAdmin && (
                       <Link
                         to="/admin/dashboard"
-                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                         onClick={() => setUserMenuOpen(false)}
                       >
                         Admin Dashboard
@@ -190,7 +200,7 @@ const Navbar = () => {
                     )}
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center space-x-2 transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
                       <span>Logout</span>
@@ -201,7 +211,7 @@ const Navbar = () => {
             ) : (
               <Link
                 to="/login"
-                className="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-secondary transition-colors"
+                className="bg-primary text-white px-5 py-2 rounded-lg font-medium hover:bg-secondary transition-colors shadow-sm hover:shadow"
               >
                 Sign In
               </Link>

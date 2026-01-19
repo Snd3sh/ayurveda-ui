@@ -28,28 +28,28 @@ const Products = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-primary text-xl">Loading products...</div>
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center py-20">
+        <div className="text-primary text-xl font-medium">Loading products...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div className="min-h-screen bg-white dark:bg-gray-900 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
+        <div className="mb-12 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white">Our Products</h1>
-          <p className="text-gray-600 dark:text-gray-400">Explore our wide range of authentic Ayurvedic products</p>
+          <p className="text-lg text-gray-600 dark:text-gray-400">Explore our wide range of authentic Ayurvedic products</p>
         </div>
 
         {/* Category Filter */}
-        <div className="mb-8 flex flex-wrap gap-3">
+        <div className="mb-12 flex flex-wrap gap-3 justify-center">
           <button
             onClick={() => setSelectedCategory('all')}
-            className={`px-6 py-2.5 rounded-lg font-semibold transition-all duration-200 ${
+            className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 text-sm ${
               selectedCategory === 'all'
-                ? 'bg-primary text-white shadow-lg scale-105'
-                : 'bg-white dark:bg-gray-800 text-primary border-2 border-primary hover:bg-emerald-50 dark:hover:bg-emerald-900/20 dark:text-gray-300'
+                ? 'bg-primary text-white shadow-md'
+                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-primary hover:text-primary'
             }`}
           >
             All
@@ -58,10 +58,10 @@ const Products = () => {
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-6 py-2.5 rounded-lg font-semibold transition-all duration-200 ${
+              className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 text-sm ${
                 selectedCategory === category
-                  ? 'bg-primary text-white shadow-lg scale-105'
-                  : 'bg-white dark:bg-gray-800 text-primary border-2 border-primary hover:bg-emerald-50 dark:hover:bg-emerald-900/20 dark:text-gray-300'
+                  ? 'bg-primary text-white shadow-md'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-primary hover:text-primary'
               }`}
             >
               {category}
@@ -71,7 +71,7 @@ const Products = () => {
 
         {/* Products Grid */}
         {products.length === 0 ? (
-          <div className="text-center py-16">
+          <div className="text-center py-20">
             <p className="text-gray-600 dark:text-gray-400 text-lg">No products found in this category.</p>
           </div>
         ) : (
@@ -80,16 +80,16 @@ const Products = () => {
               <Link
                 key={product._id}
                 to={`/products/${product._id}`}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:scale-105 transform group"
+                className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 hover:border-primary/30 dark:hover:border-primary/30 transition-all duration-200 group"
               >
-                <div className="relative overflow-hidden">
+                <div className="relative overflow-hidden bg-gray-50 dark:bg-gray-900">
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   {product.stock === 0 && (
-                    <div className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                    <div className="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-semibold">
                       Out of Stock
                     </div>
                   )}
@@ -98,7 +98,7 @@ const Products = () => {
                   <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white group-hover:text-primary transition-colors">
                     {product.name}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-2">{product.description}</p>
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2 leading-relaxed">{product.description}</p>
                   <p className="text-primary font-bold text-xl">₹{product.price}</p>
                 </div>
               </Link>

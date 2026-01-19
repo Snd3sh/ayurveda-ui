@@ -104,15 +104,15 @@ const Login = () => {
   const error = searchParams.get('error');
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#2C7A3B] to-[#9CCC65] flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-teal-50/50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 flex items-center justify-center py-12 px-4">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 p-10 max-w-md w-full">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-lightText mb-2">Login</h1>
-          <p className="text-gray-600">Sign in with your Google account</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Login</h1>
+          <p className="text-gray-600 dark:text-gray-400">Sign in with your Google account</p>
         </div>
         
         {error && (
-          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
             <p className="text-sm text-red-600 dark:text-red-400">
               {error === 'auth_failed' && 'Authentication failed. Please try again.'}
               {error === 'unauthorized' && 'You are not authorized to access this account.'}
@@ -123,27 +123,27 @@ const Login = () => {
         )}
         
         {isChecking && (
-          <div className="mb-4 text-center">
-            <p className="text-sm text-gray-600">Checking authentication...</p>
+          <div className="mb-6 text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-400">Checking authentication...</p>
           </div>
         )}
         
         {!isChecking && authState?.authenticated && (
-          <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-            <p className="text-sm text-green-600 dark:text-green-400">
+          <div className="mb-6 p-4 bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-xl">
+            <p className="text-sm text-teal-700 dark:text-teal-300 mb-3">
               You are already logged in as {authState.user?.name || 'User'}.
             </p>
-            <div className="mt-2 flex gap-2">
+            <div className="flex gap-3">
               <Link
                 to="/"
-                className="text-xs text-green-700 dark:text-green-300 hover:underline"
+                className="text-xs text-teal-700 dark:text-teal-300 hover:text-primary font-medium transition-colors"
               >
                 Go to Homepage
               </Link>
               {authState.isAdmin && (
                 <Link
                   to="/admin/dashboard"
-                  className="text-xs text-green-700 dark:text-green-300 hover:underline"
+                  className="text-xs text-teal-700 dark:text-teal-300 hover:text-primary font-medium transition-colors"
                 >
                   Go to Dashboard
                 </Link>
@@ -155,7 +155,7 @@ const Login = () => {
         {(!isChecking && !authState?.authenticated) && (
           <button
             onClick={handleGoogleLogin}
-            className="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-secondary transition-colors flex items-center justify-center"
+            className="w-full bg-primary text-white py-3.5 rounded-xl font-semibold hover:bg-secondary transition-all duration-200 flex items-center justify-center shadow-md hover:shadow-lg"
           >
           <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
             <path

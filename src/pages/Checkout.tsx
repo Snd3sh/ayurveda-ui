@@ -91,18 +91,18 @@ const Checkout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div className="min-h-screen bg-white dark:bg-gray-900 py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold mb-8 text-gray-900 dark:text-white">Checkout</h1>
+        <h1 className="text-4xl font-bold mb-12 text-gray-900 dark:text-white">Checkout</h1>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 border border-gray-100 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-800 p-8 md:p-10">
               <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Shipping Address</h2>
               
               {/* Delivery Notice */}
-              <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                <p className="text-sm text-blue-800 dark:text-blue-300">
+              <div className="mb-8 p-4 bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-xl">
+                <p className="text-sm text-teal-800 dark:text-teal-300">
                   <strong>Delivery Information:</strong> We currently deliver only within Nepal, specifically to <strong>Kathmandu</strong> and <strong>Pokhara</strong>.
                 </p>
               </div>
@@ -116,7 +116,7 @@ const Checkout = () => {
                     required
                     value={formData.fullName}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
                   />
                 </div>
                 <div>
@@ -127,7 +127,7 @@ const Checkout = () => {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
                   />
                 </div>
                 <div>
@@ -138,7 +138,7 @@ const Checkout = () => {
                     required
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
                   />
                 </div>
                 <div>
@@ -149,7 +149,7 @@ const Checkout = () => {
                     required
                     value={formData.address}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -160,10 +160,10 @@ const Checkout = () => {
                       required
                       value={formData.city}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors ${
+                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors ${
                         cityError 
                           ? 'border-red-500 dark:border-red-500' 
-                          : 'border-gray-200 dark:border-gray-700'
+                          : 'border-gray-300 dark:border-gray-700'
                       }`}
                     >
                       <option value="">Select City</option>
@@ -182,7 +182,7 @@ const Checkout = () => {
                       required
                       value={formData.state}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
                       placeholder="e.g., Bagmati, Gandaki"
                     />
                   </div>
@@ -196,7 +196,7 @@ const Checkout = () => {
                       required
                       value={formData.postalCode}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
                     />
                   </div>
                   <div>
@@ -207,7 +207,7 @@ const Checkout = () => {
                       required
                       value={formData.country}
                       readOnly
-                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 cursor-not-allowed"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -216,18 +216,18 @@ const Checkout = () => {
           </div>
 
           <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sticky top-24 border border-gray-100 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 sticky top-24">
               <h2 className="text-xl font-bold mb-6 text-gray-900 dark:text-white">Order Summary</h2>
-              <div className="space-y-3 mb-6">
+              <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-gray-600 dark:text-gray-400">
                   <span>Items ({cart.length})</span>
-                  <span className="font-semibold">₹{totalPrice}</span>
+                  <span className="font-medium">₹{totalPrice}</span>
                 </div>
                 <div className="flex justify-between text-gray-600 dark:text-gray-400">
                   <span>Shipping</span>
-                  <span className="font-semibold">₹50</span>
+                  <span className="font-medium">₹50</span>
                 </div>
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-3 flex justify-between font-bold text-lg text-gray-900 dark:text-white">
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-4 flex justify-between font-bold text-lg text-gray-900 dark:text-white">
                   <span>Total</span>
                   <span className="text-primary">₹{totalPrice + 50}</span>
                 </div>
@@ -235,7 +235,7 @@ const Checkout = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-secondary transition-all duration-200 disabled:opacity-50 shadow-lg hover:shadow-xl hover:scale-105 transform disabled:hover:scale-100"
+                className="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:bg-secondary transition-all duration-200 disabled:opacity-50 shadow-md hover:shadow-lg"
               >
                 {loading ? 'Processing...' : 'Place Order'}
               </button>
