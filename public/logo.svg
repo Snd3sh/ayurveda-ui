@@ -1,0 +1,30 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Base/Root section - darker forest green circles and swirls -->
+  <path d="M20 105 Q15 100, 20 95 Q25 90, 20 85" stroke="#134e4a" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M100 105 Q105 100, 100 95 Q95 90, 100 85" stroke="#134e4a" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="22" cy="98" r="6" stroke="#134e4a" stroke-width="2" fill="none"/>
+  <circle cx="98" cy="98" r="6" stroke="#134e4a" stroke-width="2" fill="none"/>
+  <path d="M25 100 Q30 95, 35 100" stroke="#134e4a" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M85 100 Q90 95, 95 100" stroke="#134e4a" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Central upward flowing stream - lighter lime green -->
+  <path d="M55 105 Q58 90, 60 75 Q58 60, 60 45 Q58 30, 60 15" stroke="#5eead4" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M65 105 Q62 90, 60 75 Q62 60, 60 45 Q62 30, 60 15" stroke="#5eead4" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M58 105 Q60 95, 60 85 Q60 75, 60 65" stroke="#134e4a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M62 105 Q60 95, 60 85 Q60 75, 60 65" stroke="#134e4a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  
+  <!-- Side horizontal wave layers - lighter green -->
+  <path d="M35 75 Q40 70, 45 75" stroke="#5eead4" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M35 65 Q40 60, 45 65" stroke="#5eead4" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M75 75 Q80 70, 85 75" stroke="#5eead4" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M75 65 Q80 60, 85 65" stroke="#5eead4" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  
+  <!-- Top leaf elements - darker green (7 leaves) -->
+  <ellipse cx="38" cy="18" rx="5" ry="9" fill="#134e4a"/>
+  <ellipse cx="48" cy="12" rx="4" ry="7" fill="#134e4a"/>
+  <ellipse cx="58" cy="10" rx="5" ry="10" fill="#134e4a"/>
+  <ellipse cx="68" cy="12" rx="4" ry="7" fill="#134e4a"/>
+  <ellipse cx="78" cy="18" rx="5" ry="9" fill="#134e4a"/>
+  <ellipse cx="43" cy="22" rx="3.5" ry="6" fill="#134e4a"/>
+  <ellipse cx="73" cy="22" rx="3.5" ry="6" fill="#134e4a"/>
+</svg>

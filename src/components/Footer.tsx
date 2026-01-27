@@ -9,7 +9,7 @@ const Footer = () => {
             <img 
               src="/logo.png" 
               alt="Logo" 
-              className="h-10 w-auto object-contain mb-4"
+              className="h-24 w-auto max-w-[200px] object-contain mb-4"
               onError={(e) => {
                 console.error('Logo failed to load');
                 e.currentTarget.style.display = 'none';
