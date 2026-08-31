@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ShoppingCart, ArrowLeft, CheckCircle2 } from 'lucide-react';
-import { productApi } from '../utils/api';
-import { useCart } from '../hooks/useCart';
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { ShoppingCart, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { productApi } from "../utils/api";
+import { useCart } from "../hooks/useCart";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -29,24 +29,27 @@ const ProductDetails = () => {
   const handleAddToCart = async () => {
     if (!product) return;
     try {
-      await addToCart({
-        product: product._id,
-        name: product.name,
-        image: product.image,
-        price: product.price,
-      }, quantity);
+      await addToCart(
+        {
+          product: product._id,
+          name: product.name,
+          image: product.image,
+          price: product.price,
+        },
+        quantity,
+      );
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
-        navigate('/cart');
+        navigate("/cart");
       }, 1000);
     } catch (error: any) {
-      console.error('Error adding to cart:', error);
+      console.error("Error adding to cart:", error);
       if (error.response?.status === 401) {
-        alert('Please login to add items to cart.');
-        navigate('/login');
+        alert("Please login to add items to cart.");
+        navigate("/login");
       } else {
-        alert('Failed to add item to cart. Please try again.');
+        alert("Failed to add item to cart. Please try again.");
       }
     }
   };
@@ -54,7 +57,9 @@ const ProductDetails = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900 py-20">
-        <div className="text-primary text-xl font-medium">Loading product...</div>
+        <div className="text-primary text-xl font-medium">
+          Loading product...
+        </div>
       </div>
     );
   }
@@ -62,7 +67,9 @@ const ProductDetails = () => {
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900 py-20">
-        <div className="text-red-500 text-xl font-medium">Product not found</div>
+        <div className="text-red-500 text-xl font-medium">
+          Product not found
+        </div>
       </div>
     );
   }
@@ -89,8 +96,12 @@ const ProductDetails = () => {
             </div>
             <div className="space-y-6">
               <div>
-                <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">{product.name}</h1>
-                <p className="text-3xl font-bold text-primary mb-6">₹{product.price}</p>
+                <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
+                  {product.name}
+                </h1>
+                <p className="text-3xl font-bold text-primary mb-6">
+                  Rs{product.price}
+                </p>
               </div>
               <div>
                 <span className="inline-block bg-teal-50 dark:bg-teal-900/20 text-primary px-4 py-2 rounded-lg text-sm font-semibold border border-teal-100 dark:border-teal-800/50">
@@ -98,11 +109,17 @@ const ProductDetails = () => {
                 </span>
               </div>
               <div>
-                <h3 className="font-semibold mb-3 text-lg text-gray-900 dark:text-white">Description</h3>
-                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{product.description}</p>
+                <h3 className="font-semibold mb-3 text-lg text-gray-900 dark:text-white">
+                  Description
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                  {product.description}
+                </p>
               </div>
               <div>
-                <label className="block font-semibold mb-3 text-gray-900 dark:text-white">Quantity</label>
+                <label className="block font-semibold mb-3 text-gray-900 dark:text-white">
+                  Quantity
+                </label>
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -110,7 +127,9 @@ const ProductDetails = () => {
                   >
                     -
                   </button>
-                  <span className="text-xl font-semibold text-gray-900 dark:text-white w-12 text-center">{quantity}</span>
+                  <span className="text-xl font-semibold text-gray-900 dark:text-white w-12 text-center">
+                    {quantity}
+                  </span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
                     className="w-12 h-12 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-semibold"

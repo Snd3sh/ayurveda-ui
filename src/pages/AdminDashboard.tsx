@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Package, ShoppingBag, DollarSign, LogOut, Home } from 'lucide-react';
-import { productApi, orderApi, authApi } from '../utils/api';
-import { clearAuthCache } from '../utils/adminAuth';
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Package, ShoppingBag, DollarSign, LogOut, Home } from "lucide-react";
+import { productApi, orderApi, authApi } from "../utils/api";
+import { clearAuthCache } from "../utils/adminAuth";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -23,7 +23,10 @@ const AdminDashboard = () => {
 
         const products = productsRes.success ? productsRes.data || [] : [];
         const orders = ordersRes.success ? ordersRes.data || [] : [];
-        const revenue = orders.reduce((sum: number, order: any) => sum + (order.totalPrice || 0), 0);
+        const revenue = orders.reduce(
+          (sum: number, order: any) => sum + (order.totalPrice || 0),
+          0,
+        );
 
         setStats({
           totalProducts: products.length,
@@ -31,7 +34,7 @@ const AdminDashboard = () => {
           totalRevenue: revenue,
         });
       } catch (error) {
-        console.error('Error fetching stats:', error);
+        console.error("Error fetching stats:", error);
       } finally {
         setLoading(false);
       }
@@ -42,7 +45,7 @@ const AdminDashboard = () => {
   const handleLogout = async () => {
     await authApi.logout();
     clearAuthCache();
-    navigate('/login');
+    navigate("/login");
   };
 
   if (loading) {
@@ -85,7 +88,9 @@ const AdminDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm">Total Products</p>
-                <p className="text-3xl font-bold text-lightText">{stats.totalProducts}</p>
+                <p className="text-3xl font-bold text-lightText">
+                  {stats.totalProducts}
+                </p>
               </div>
               <Package className="w-12 h-12 text-primary" />
             </div>
@@ -94,7 +99,9 @@ const AdminDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm">Total Orders</p>
-                <p className="text-3xl font-bold text-lightText">{stats.totalOrders}</p>
+                <p className="text-3xl font-bold text-lightText">
+                  {stats.totalOrders}
+                </p>
               </div>
               <ShoppingBag className="w-12 h-12 text-secondary" />
             </div>
@@ -103,7 +110,9 @@ const AdminDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm">Total Revenue</p>
-                <p className="text-3xl font-bold text-lightText">₹{stats.totalRevenue}</p>
+                <p className="text-3xl font-bold text-lightText">
+                  Rs{stats.totalRevenue}
+                </p>
               </div>
               <DollarSign className="w-12 h-12 text-accent" />
             </div>
@@ -118,7 +127,9 @@ const AdminDashboard = () => {
             <div className="flex items-center space-x-4">
               <Package className="w-12 h-12 text-primary" />
               <div>
-                <h3 className="text-xl font-bold text-lightText">Manage Products</h3>
+                <h3 className="text-xl font-bold text-lightText">
+                  Manage Products
+                </h3>
                 <p className="text-gray-600">Add, edit, or delete products</p>
               </div>
             </div>
@@ -130,7 +141,9 @@ const AdminDashboard = () => {
             <div className="flex items-center space-x-4">
               <ShoppingBag className="w-12 h-12 text-secondary" />
               <div>
-                <h3 className="text-xl font-bold text-lightText">Manage Orders</h3>
+                <h3 className="text-xl font-bold text-lightText">
+                  Manage Orders
+                </h3>
                 <p className="text-gray-600">View and update order status</p>
               </div>
             </div>

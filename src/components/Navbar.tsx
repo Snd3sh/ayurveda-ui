@@ -5,6 +5,7 @@ import { useCart } from '../hooks/useCart';
 import { useTheme } from '../contexts/ThemeContext';
 import { checkAdminAuth, logout, clearAuthCache } from '../utils/adminAuth';
 
+
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();

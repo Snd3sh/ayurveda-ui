@@ -1,105 +1,376 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { productApi } from '../utils/api';
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { productApi } from "../utils/api";
 
 const Products = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [categories, setCategories] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      setLoading(true);
-      const params = selectedCategory !== 'all' ? { category: selectedCategory } : {};
-      const response = await productApi.getAll(params);
-      if (response.success && response.data) {
-        setProducts(response.data);
-        // Extract unique categories
-        const uniqueCategories = Array.from(
-          new Set(response.data.map((p: any) => p.category))
-        ) as string[];
-        setCategories(uniqueCategories);
+      try {
+        setLoading(true);
+
+        const params =
+          selectedCategory !== "all" ? { category: selectedCategory } : {};
+
+        const response = await productApi.getAll(params);
+
+        if (response.success && response.data) {
+          setProducts(response.data);
+
+          const uniqueCategories = Array.from(
+            new Set(response.data.map((p: any) => p.category)),
+          ) as string[];
+
+          setCategories(uniqueCategories);
+        } else {
+          setProducts([]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+        setProducts([]);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
+
     fetchProducts();
   }, [selectedCategory]);
 
+  // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center py-20">
-        <div className="text-primary text-xl font-medium">Loading products...</div>
+      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center transition-colors duration-300">
+        <div className="text-primary text-xl font-medium">
+          Loading products...
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 py-12">
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300 py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white">Our Products</h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400">Explore our wide range of authentic Ayurvedic products</p>
+        {/* ============================= */}
+        {/* PAGE HEADER */}
+        {/* ============================= */}
+
+        <div className="text-center mb-14">
+          {/* Small badge */}
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-teal-50 dark:bg-gray-800 border border-teal-100 dark:border-gray-700 text-teal-700 dark:text-teal-300 text-sm font-semibold mb-6 transition-colors duration-300">
+            <span>🌿</span>
+            <span>Natural Ayurvedic Care</span>
+          </div>
+
+          {/* Heading */}
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 dark:text-white mb-5">
+            Our Products
+          </h1>
+
+          {/* Subtitle */}
+          <p className="max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
+            Discover authentic Ayurvedic products made with nature, tradition
+            and care.
+          </p>
         </div>
 
-        {/* Category Filter */}
-        <div className="mb-12 flex flex-wrap gap-3 justify-center">
+        {/* ============================= */}
+        {/* CATEGORY FILTER */}
+        {/* ============================= */}
+
+        <div className="flex flex-wrap justify-center gap-3 mb-16">
+          {/* All button */}
           <button
-            onClick={() => setSelectedCategory('all')}
-            className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 text-sm ${
-              selectedCategory === 'all'
-                ? 'bg-primary text-white shadow-md'
-                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-primary hover:text-primary'
-            }`}
+            onClick={() => setSelectedCategory("all")}
+            className={`
+              px-6 py-3
+              rounded-full
+              text-sm
+              font-semibold
+              transition-all
+              duration-300
+              border
+              ${
+                selectedCategory === "all"
+                  ? `
+                    bg-primary
+                    text-white
+                    border-primary
+                    shadow-lg
+                    shadow-teal-500/20
+                    -translate-y-0.5
+                  `
+                  : `
+                    bg-white
+                    dark:bg-gray-800
+                    text-gray-700
+                    dark:text-gray-300
+                    border-gray-200
+                    dark:border-gray-700
+                    hover:border-primary
+                    hover:text-primary
+                    dark:hover:text-teal-300
+                  `
+              }
+            `}
           >
-            All
+            All Products
           </button>
+
+          {/* Category buttons */}
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 text-sm ${
-                selectedCategory === category
-                  ? 'bg-primary text-white shadow-md'
-                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-primary hover:text-primary'
-              }`}
+              className={`
+                px-6 py-3
+                rounded-full
+                text-sm
+                font-semibold
+                transition-all
+                duration-300
+                border
+                ${
+                  selectedCategory === category
+                    ? `
+                      bg-primary
+                      text-white
+                      border-primary
+                      shadow-lg
+                      shadow-teal-500/20
+                      -translate-y-0.5
+                    `
+                    : `
+                      bg-white
+                      dark:bg-gray-800
+                      text-gray-700
+                      dark:text-gray-300
+                      border-gray-200
+                      dark:border-gray-700
+                      hover:border-primary
+                      hover:text-primary
+                      dark:hover:text-teal-300
+                    `
+                }
+              `}
             >
               {category}
             </button>
           ))}
         </div>
 
-        {/* Products Grid */}
+        {/* ============================= */}
+        {/* PRODUCTS */}
+        {/* ============================= */}
+
         {products.length === 0 ? (
-          <div className="text-center py-20">
-            <p className="text-gray-600 dark:text-gray-400 text-lg">No products found in this category.</p>
+          <div className="text-center py-24">
+            <div className="text-5xl mb-5">🌿</div>
+
+            <p className="text-gray-600 dark:text-gray-400 text-lg">
+              No products found in this category.
+            </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7">
             {products.map((product) => (
               <Link
                 key={product._id}
                 to={`/products/${product._id}`}
-                className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 hover:border-primary/30 dark:hover:border-primary/30 transition-all duration-200 group"
+                className="
+                  group
+                  bg-white
+                  dark:bg-gray-800
+                  rounded-3xl
+                  overflow-hidden
+                  border
+                  border-gray-200
+                  dark:border-gray-700
+                  shadow-sm
+                  dark:shadow-none
+                  hover:shadow-xl
+                  dark:hover:shadow-black/20
+                  hover:-translate-y-1
+                  transition-all
+                  duration-300
+                "
               >
-                <div className="relative overflow-hidden bg-gray-50 dark:bg-gray-900">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                {/* ============================= */}
+                {/* IMAGE AREA */}
+                {/* ============================= */}
+
+                <div
+                  className="
+                  relative
+                  h-72
+                  overflow-hidden
+                  bg-gray-50
+                  dark:bg-gray-900
+                  transition-colors
+                  duration-300
+                "
+                >
+                  {/* Category badge */}
+                  <div
+                    className="
+                    absolute
+                    top-4
+                    left-4
+                    z-10
+                    px-4
+                    py-2
+                    rounded-full
+                    bg-white
+                    dark:bg-gray-800
+                    border
+                    border-gray-200
+                    dark:border-gray-700
+                    text-xs
+                    font-semibold
+                    text-teal-700
+                    dark:text-teal-300
+                    shadow-sm
+                  "
+                  >
+                    {product.category}
+                  </div>
+
+                  {/* Favorite button */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    className="
+                      absolute
+                      top-4
+                      right-4
+                      z-10
+                      w-10
+                      h-10
+                      rounded-full
+                      bg-white
+                      dark:bg-gray-800
+                      border
+                      border-gray-200
+                      dark:border-gray-700
+                      flex
+                      items-center
+                      justify-center
+                      text-gray-500
+                      dark:text-gray-400
+                      hover:text-primary
+                      hover:border-primary
+                      transition-all
+                      duration-200
+                      shadow-sm
+                    "
+                  >
+                    ♡
+                  </button>
+
+                  {/* Product image */}
+                  <div className="w-full h-full flex items-center justify-center p-8">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="
+                        max-w-full
+                        max-h-full
+                        object-contain
+                        drop-shadow-md
+                        group-hover:scale-105
+                        transition-transform
+                        duration-500
+                      "
+                    />
+                  </div>
+
+                  {/* Out of stock */}
                   {product.stock === 0 && (
-                    <div className="absolute top-3 right-3 bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-semibold">
+                    <div
+                      className="
+                      absolute
+                      bottom-4
+                      left-4
+                      px-3
+                      py-1.5
+                      rounded-full
+                      bg-red-500
+                      text-white
+                      text-xs
+                      font-semibold
+                    "
+                    >
                       Out of Stock
                     </div>
                   )}
                 </div>
-                <div className="p-5">
-                  <h3 className="font-semibold text-lg mb-2 text-gray-900 dark:text-white group-hover:text-primary transition-colors">
+
+                {/* ============================= */}
+                {/* PRODUCT INFORMATION */}
+                {/* ============================= */}
+
+                <div className="p-6">
+                  {/* Product name */}
+                  <h3
+                    className="
+                    text-lg
+                    font-bold
+                    text-gray-900
+                    dark:text-white
+                    mb-2
+                    group-hover:text-primary
+                    transition-colors
+                    duration-200
+                  "
+                  >
                     {product.name}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2 leading-relaxed">{product.description}</p>
-                  <p className="text-primary font-bold text-xl">₹{product.price}</p>
+
+                  {/* Description */}
+                  <p
+                    className="
+                    text-sm
+                    text-gray-600
+                    dark:text-gray-400
+                    leading-relaxed
+                    line-clamp-2
+                    mb-5
+                  "
+                  >
+                    {product.description}
+                  </p>
+
+                  {/* Price */}
+                  <div className="flex items-center justify-between">
+                    <p
+                      className="
+                      text-2xl
+                      font-bold
+                      text-primary
+                    "
+                    >
+                      Rs {product.price}
+                    </p>
+
+                    <span
+                      className="
+                      text-sm
+                      font-semibold
+                      text-gray-500
+                      dark:text-gray-400
+                      group-hover:text-primary
+                      transition-colors
+                    "
+                    >
+                      View →
+                    </span>
+                  </div>
                 </div>
               </Link>
             ))}

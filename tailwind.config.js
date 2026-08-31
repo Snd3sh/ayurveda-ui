@@ -5,23 +5,25 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#14B8A6", // teal/cyan accent color
-        secondary: "#0D9488", // darker teal
-        accent: "#5EEAD4", // lighter teal
+        primary: "#14B8A6",
+        secondary: "#0D9488",
+        accent: "#5EEAD4",
+
         teal: {
           50: "#f0fdfa",
           100: "#ccfbf1",
           200: "#99f6e4",
           300: "#5eead4",
           400: "#2dd4bf",
-          500: "#14b8a6", // primary teal
+          500: "#14b8a6",
           600: "#0d9488",
           700: "#0f766e",
           800: "#115e59",
           900: "#134e4a",
         },
-        lightBg: "#FFFFFF",
-        darkBg: "#111827",
+
+        lightBg: "#FAFCFB",
+        darkBg: "#0F172A",
         lightText: "#1F2937",
         darkText: "#F9FAFB",
       },

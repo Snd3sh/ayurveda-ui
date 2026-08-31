@@ -394,7 +394,7 @@ const AdminProducts = () => {
                   </td>
                   <td className="px-6 py-4 font-semibold text-lightText">{product.name}</td>
                   <td className="px-6 py-4 text-gray-600">{product.category}</td>
-                  <td className="px-6 py-4 text-primary font-bold">₹{product.price}</td>
+                  <td className="px-6 py-4 text-primary font-bold">Rs{product.price}</td>
                   <td className="px-6 py-4">{product.stock}</td>
                   <td className="px-6 py-4">
                     <div className="flex space-x-2">
