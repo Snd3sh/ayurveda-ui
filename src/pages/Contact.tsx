@@ -49,7 +49,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-1">Phone</h3>
-                  <p className="text-gray-600 dark:text-gray-400">+1 234 567 8900</p>
+                  <p className="text-gray-600 dark:text-gray-400">+977 98794 32101</p>
                 </div>
               </div>
               <div className="flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
@@ -59,9 +59,9 @@ const Contact = () => {
                 <div>
                   <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-1">Address</h3>
                   <p className="text-gray-600 dark:text-gray-400">
-                    123 Wellness Street
+                    Bhalupahad
                     <br />
-                    Health City, HC 12345
+                    Pokhara
                     <br />
                     India
                   </p>

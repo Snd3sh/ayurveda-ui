@@ -1,17 +1,29 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Menu, X, Sun, Moon, User, LogOut, ChevronDown } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { useCart } from '../hooks/useCart';
-import { useTheme } from '../contexts/ThemeContext';
-import { checkAdminAuth, logout, clearAuthCache } from '../utils/adminAuth';
-
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  ShoppingCart,
+  Menu,
+  X,
+  Sun,
+  Moon,
+  User,
+  LogOut,
+  ChevronDown,
+} from "lucide-react";
+import { useState, useEffect } from "react";
+import { useCart } from "../hooks/useCart";
+import { useTheme } from "../contexts/ThemeContext";
+import { checkAdminAuth, logout, clearAuthCache } from "../utils/adminAuth";
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [authState, setAuthState] = useState<{ authenticated: boolean; isAdmin?: boolean; user?: any } | null>(null);
+  const [authState, setAuthState] = useState<{
+    authenticated: boolean;
+    isAdmin?: boolean;
+    user?: any;
+  } | null>(null);
   const { itemCount } = useCart();
   const { theme, toggleTheme } = useTheme();
 
@@ -23,30 +35,33 @@ const Navbar = () => {
       setAuthState(auth);
     };
     loadAuth();
-    
+
     // Refresh auth state when location changes (e.g., after login)
     const handleLocationChange = () => {
       loadAuth();
     };
-    window.addEventListener('focus', handleLocationChange);
-    
+    window.addEventListener("focus", handleLocationChange);
+
     // Refresh auth state periodically
     const interval = setInterval(loadAuth, 30000); // Check every 30 seconds
     return () => {
       clearInterval(interval);
-      window.removeEventListener('focus', handleLocationChange);
+      window.removeEventListener("focus", handleLocationChange);
     };
   }, [location.pathname]);
 
   // Close user menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (userMenuOpen && !(event.target as Element).closest('.user-menu-container')) {
+      if (
+        userMenuOpen &&
+        !(event.target as Element).closest(".user-menu-container")
+      ) {
         setUserMenuOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [userMenuOpen]);
 
   const handleLogout = async () => {
@@ -54,7 +69,7 @@ const Navbar = () => {
     clearAuthCache();
     setAuthState({ authenticated: false });
     setUserMenuOpen(false);
-    navigate('/');
+    navigate("/");
   };
 
   return (
@@ -62,14 +77,17 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 group hover:opacity-80 transition-opacity">
-            <img 
-              src="/logo.png" 
-              alt="Logo" 
+          <Link
+            to="/"
+            className="flex items-center space-x-2 group hover:opacity-80 transition-opacity"
+          >
+            <img
+              src="/logo.png"
+              alt="Logo"
               className="h-24 w-auto max-w-[200px] object-contain"
               onError={(e) => {
-                console.error('Logo failed to load');
-                e.currentTarget.style.display = 'none';
+                console.error("Logo failed to load");
+                e.currentTarget.style.display = "none";
               }}
             />
           </Link>
@@ -78,53 +96,68 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-1 absolute left-1/2 transform -translate-x-1/2">
             <Link
               to="/"
-              className={`px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
-                isActive('/') 
-                  ? 'text-primary bg-teal-50 dark:bg-teal-900/20' 
-                  : 'text-gray-700 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50'
+              className={`relative px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
+                isActive("/")
+                  ? "text-primary"
+                  : "text-gray-700 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50"
               }`}
             >
               Home
+              {isActive("/") && (
+                <span className="absolute left-4 right-4 -bottom-0.5 h-0.5 rounded-full bg-primary animate-fade-in" />
+              )}
             </Link>
             <Link
               to="/products"
-              className={`px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
-                isActive('/products') 
-                  ? 'text-primary bg-teal-50 dark:bg-teal-900/20' 
-                  : 'text-gray-700 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50'
+              className={`relative px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
+                isActive("/products")
+                  ? "text-primary"
+                  : "text-gray-700 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50"
               }`}
             >
               Shop
+              {isActive("/products") && (
+                <span className="absolute left-4 right-4 -bottom-0.5 h-0.5 rounded-full bg-primary animate-fade-in" />
+              )}
             </Link>
             <Link
               to="/track-order"
-              className={`px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
-                isActive('/track-order') 
-                  ? 'text-primary bg-teal-50 dark:bg-teal-900/20' 
-                  : 'text-gray-700 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50'
+              className={`relative px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
+                isActive("/track-order")
+                  ? "text-primary"
+                  : "text-gray-700 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50"
               }`}
             >
               Track Order
+              {isActive("/track-order") && (
+                <span className="absolute left-4 right-4 -bottom-0.5 h-0.5 rounded-full bg-primary animate-fade-in" />
+              )}
             </Link>
             <Link
               to="/about"
-              className={`px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
-                isActive('/about') 
-                  ? 'text-primary bg-teal-50 dark:bg-teal-900/20' 
-                  : 'text-gray-700 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50'
+              className={`relative px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
+                isActive("/about")
+                  ? "text-primary"
+                  : "text-gray-700 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50"
               }`}
             >
               About
+              {isActive("/about") && (
+                <span className="absolute left-4 right-4 -bottom-0.5 h-0.5 rounded-full bg-primary animate-fade-in" />
+              )}
             </Link>
             <Link
               to="/contact"
-              className={`px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
-                isActive('/contact') 
-                  ? 'text-primary bg-teal-50 dark:bg-teal-900/20' 
-                  : 'text-gray-700 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50'
+              className={`relative px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
+                isActive("/contact")
+                  ? "text-primary"
+                  : "text-gray-700 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50"
               }`}
             >
               Contact
+              {isActive("/contact") && (
+                <span className="absolute left-4 right-4 -bottom-0.5 h-0.5 rounded-full bg-primary animate-fade-in" />
+              )}
             </Link>
           </div>
 
@@ -135,7 +168,7 @@ const Navbar = () => {
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300"
               aria-label="Toggle theme"
             >
-              {theme === 'dark' ? (
+              {theme === "dark" ? (
                 <Sun className="w-5 h-5" />
               ) : (
                 <Moon className="w-5 h-5" />
@@ -152,7 +185,7 @@ const Navbar = () => {
                 </span>
               )}
             </Link>
-            
+
             {/* User Menu or Sign In Button */}
             {authState?.authenticated ? (
               <div className="relative user-menu-container">
@@ -163,23 +196,23 @@ const Navbar = () => {
                   {authState.user?.picture ? (
                     <img
                       src={authState.user.picture}
-                      alt={authState.user.name || 'User'}
+                      alt={authState.user.name || "User"}
                       className="w-6 h-6 rounded-full"
                     />
                   ) : (
                     <User className="w-5 h-5 text-gray-700 dark:text-gray-300" />
                   )}
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:block">
-                    {authState.user?.name || 'User'}
+                    {authState.user?.name || "User"}
                   </span>
                   <ChevronDown className="w-4 h-4 text-gray-700 dark:text-gray-300" />
                 </button>
-                
+
                 {userMenuOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 py-2 z-50">
                     <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
                       <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                        {authState.user?.name || 'User'}
+                        {authState.user?.name || "User"}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         {authState.user?.email}
@@ -226,7 +259,7 @@ const Navbar = () => {
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-700 dark:text-gray-300"
               aria-label="Toggle theme"
             >
-              {theme === 'dark' ? (
+              {theme === "dark" ? (
                 <Sun className="w-5 h-5" />
               ) : (
                 <Moon className="w-5 h-5" />
@@ -237,7 +270,11 @@ const Navbar = () => {
               onClick={() => setIsOpen(!isOpen)}
               aria-label="Toggle menu"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
@@ -288,7 +325,7 @@ const Navbar = () => {
               <ShoppingCart className="w-5 h-5" />
               <span>Cart {itemCount > 0 && `(${itemCount})`}</span>
             </Link>
-            
+
             {/* Mobile User Menu or Sign In */}
             {authState?.authenticated ? (
               <>
@@ -297,7 +334,7 @@ const Navbar = () => {
                     {authState.user?.picture ? (
                       <img
                         src={authState.user.picture}
-                        alt={authState.user.name || 'User'}
+                        alt={authState.user.name || "User"}
                         className="w-8 h-8 rounded-full"
                       />
                     ) : (
@@ -305,7 +342,7 @@ const Navbar = () => {
                     )}
                     <div>
                       <p className="text-sm font-medium text-gray-900 dark:text-white">
-                        {authState.user?.name || 'User'}
+                        {authState.user?.name || "User"}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         {authState.user?.email}

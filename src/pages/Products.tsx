@@ -92,6 +92,7 @@ const Products = () => {
               font-semibold
               transition-all
               duration-300
+              active:scale-95
               border
               ${
                 selectedCategory === "all"
@@ -100,7 +101,7 @@ const Products = () => {
                     text-white
                     border-primary
                     shadow-lg
-                    shadow-teal-500/20
+                    shadow-primary/20
                     -translate-y-0.5
                   `
                   : `
@@ -132,6 +133,7 @@ const Products = () => {
                 font-semibold
                 transition-all
                 duration-300
+                active:scale-95
                 border
                 ${
                   selectedCategory === category
@@ -140,7 +142,7 @@ const Products = () => {
                       text-white
                       border-primary
                       shadow-lg
-                      shadow-teal-500/20
+                      shadow-primary/20
                       -translate-y-0.5
                     `
                     : `
@@ -176,12 +178,17 @@ const Products = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-7">
-            {products.map((product) => (
+            {products.map((product, index) => (
               <Link
                 key={product._id}
                 to={`/products/${product._id}`}
+                style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
                 className="
                   group
+                  relative
+                  animate-fade-in-up
+                  opacity-0
+                  [animation-fill-mode:forwards]
                   bg-white
                   dark:bg-gray-800
                   rounded-3xl
@@ -192,8 +199,10 @@ const Products = () => {
                   shadow-sm
                   dark:shadow-none
                   hover:shadow-xl
-                  dark:hover:shadow-black/20
-                  hover:-translate-y-1
+                  hover:shadow-primary/10
+                  dark:hover:shadow-black/30
+                  hover:border-primary/30
+                  hover:-translate-y-1.5
                   transition-all
                   duration-300
                 "
@@ -288,6 +297,39 @@ const Products = () => {
                         duration-500
                       "
                     />
+                  </div>
+
+                  {/* Quick-view reveal — slides up on hover/selection */}
+                  <div
+                    className="
+                    absolute
+                    bottom-0
+                    left-0
+                    right-0
+                    px-4
+                    py-3
+                    bg-gradient-to-t
+                    from-primary/95
+                    to-primary/80
+                    text-white
+                    text-sm
+                    font-semibold
+                    text-center
+                    translate-y-full
+                    group-hover:translate-y-0
+                    transition-transform
+                    duration-300
+                    ease-out
+                    flex
+                    items-center
+                    justify-center
+                    gap-2
+                  "
+                  >
+                    <span>Quick View</span>
+                    <span className="group-hover:translate-x-0.5 transition-transform">
+                      →
+                    </span>
                   </div>
 
                   {/* Out of stock */}

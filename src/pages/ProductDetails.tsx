@@ -94,9 +94,9 @@ const ProductDetails = () => {
                 className="w-full h-full min-h-[400px] object-cover"
               />
             </div>
-            <div className="space-y-6">
+            <div className="space-y-6 animate-fade-in-up">
               <div>
-                <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
+                <h1 className="font-serif text-4xl font-semibold mb-4 text-gray-900 dark:text-white">
                   {product.name}
                 </h1>
                 <p className="text-3xl font-bold text-primary mb-6">
@@ -104,7 +104,7 @@ const ProductDetails = () => {
                 </p>
               </div>
               <div>
-                <span className="inline-block bg-teal-50 dark:bg-teal-900/20 text-primary px-4 py-2 rounded-lg text-sm font-semibold border border-teal-100 dark:border-teal-800/50">
+                <span className="inline-block bg-teal-50 dark:bg-teal-900/20 text-secondary dark:text-teal-200 px-4 py-2 rounded-lg text-sm font-semibold border border-teal-100 dark:border-teal-800/50">
                   {product.category}
                 </span>
               </div>
@@ -123,16 +123,19 @@ const ProductDetails = () => {
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-12 h-12 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-semibold"
+                    className="w-12 h-12 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-primary/40 active:scale-90 transition-all duration-150 font-semibold"
                   >
                     -
                   </button>
-                  <span className="text-xl font-semibold text-gray-900 dark:text-white w-12 text-center">
+                  <span
+                    key={quantity}
+                    className="text-xl font-semibold text-gray-900 dark:text-white w-12 text-center animate-pop-in"
+                  >
                     {quantity}
                   </span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="w-12 h-12 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-semibold"
+                    className="w-12 h-12 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-primary/40 active:scale-90 transition-all duration-150 font-semibold"
                   >
                     +
                   </button>
@@ -142,13 +145,17 @@ const ProductDetails = () => {
                 <button
                   onClick={handleAddToCart}
                   disabled={showSuccess}
-                  className="w-full bg-primary text-white py-4 rounded-xl font-semibold hover:bg-secondary transition-all duration-200 flex items-center justify-center shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={`w-full py-4 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center shadow-md hover:shadow-lg disabled:cursor-not-allowed active:scale-[0.98] ${
+                    showSuccess
+                      ? "bg-maroon-500 text-white"
+                      : "bg-primary text-white hover:bg-secondary disabled:opacity-50"
+                  }`}
                 >
                   {showSuccess ? (
-                    <>
+                    <span className="flex items-center animate-pop-in">
                       <CheckCircle2 className="w-5 h-5 mr-2" />
                       Added to Cart!
-                    </>
+                    </span>
                   ) : (
                     <>
                       <ShoppingCart className="w-5 h-5 mr-2" />
