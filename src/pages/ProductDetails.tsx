@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ShoppingCart, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { productApi } from "../utils/api";
 import { useCart } from "../hooks/useCart";
+import RecommendationSection from "../components/RecommendationSection";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -174,6 +175,8 @@ const ProductDetails = () => {
             </div>
           </div>
         </div>
+
+        {product && <RecommendationSection productId={product._id} />}
       </div>
     </div>
   );

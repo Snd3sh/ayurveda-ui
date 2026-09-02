@@ -1,12 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../hooks/useCart";
-import { orderApi } from "../utils/api";
+import { authApi, orderApi } from "../utils/api";
+
+const SHIPPING_FEE = 100;
 
 const Checkout = () => {
   const { cart, totalPrice, clearCart } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [paymentMethod, setPaymentMethod] = useState<
+    "cash_on_delivery" | "paypal"
+  >("paypal");
   const [formData, setFormData] = useState({
     fullName: "",
     address: "",
@@ -19,10 +25,26 @@ const Checkout = () => {
   });
   const [cityError, setCityError] = useState("");
 
+  useEffect(() => {
+    const loadUser = async () => {
+      const auth = await authApi.getMe();
+      if (!auth.authenticated) {
+        navigate("/login", { replace: true });
+        return;
+      }
+      setFormData((current) => ({
+        ...current,
+        fullName: auth.user?.name || current.fullName,
+        email: auth.user?.email || current.email,
+      }));
+      setAuthLoading(false);
+    };
+    loadUser();
+  }, [navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate city
     if (formData.city !== "Kathmandu" && formData.city !== "Pokhara") {
       setCityError("Delivery is only available in Kathmandu and Pokhara");
       return;
@@ -33,47 +55,51 @@ const Checkout = () => {
       return;
     }
 
+    if (cart.length === 0) {
+      alert("Your cart is empty.");
+      navigate("/products");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const orderData = {
+      // IMPORTANT: do not send prices, totals, or user identity as trusted values.
+      // The backend gets the authenticated user from the JWT and calculates all prices.
+      const response = await orderApi.create({
         orderItems: cart.map((item) => ({
           product: item.product,
-          name: item.name,
           quantity: item.quantity,
-          price: item.price,
-          image: item.image,
         })),
         shippingAddress: formData,
-        paymentMethod: "cash_on_delivery",
-        itemsPrice: totalPrice,
-        shippingPrice: 50,
-        taxPrice: 0,
-        totalPrice: totalPrice + 50,
-        user: {
-          name: formData.fullName,
-          email: formData.email,
-        },
-      };
+        paymentMethod,
+      });
 
-      const response = await orderApi.create(orderData);
       if (response.success && response.data) {
+        if (paymentMethod === "paypal" && response.data.approvalUrl) {
+          // Stock is reserved by the server before payment initiation.
+          // PayPal payment is captured and verified by the backend before the order is marked paid.
+          clearCart();
+          window.location.href = response.data.approvalUrl;
+          return;
+        }
+
         clearCart();
         navigate(`/order-confirmation/${response.data._id}`);
       } else {
-        const errorMessage =
+        alert(
           response.message ||
-          response.error ||
-          "Failed to create order. Please try again.";
-        alert(errorMessage);
+            response.error ||
+            "Failed to create order. Please try again.",
+        );
       }
     } catch (error: any) {
       console.error("Checkout error:", error);
-      const errorMessage =
+      alert(
         error.response?.data?.message ||
-        error.response?.data?.error ||
-        "An error occurred. Please try again.";
-      alert(errorMessage);
+          error.response?.data?.error ||
+          "An error occurred. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -83,20 +109,26 @@ const Checkout = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData((current) => ({ ...current, [name]: value }));
 
-    // Validate city
     if (name === "city") {
-      if (value && value !== "Kathmandu" && value !== "Pokhara") {
-        setCityError("Delivery is only available in Kathmandu and Pokhara");
-      } else {
-        setCityError("");
-      }
+      setCityError(
+        value && value !== "Kathmandu" && value !== "Pokhara"
+          ? "Delivery is only available in Kathmandu and Pokhara"
+          : "",
+      );
     }
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+        <div className="text-primary text-xl font-medium">
+          Checking your account...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 py-12">
@@ -115,7 +147,6 @@ const Checkout = () => {
                 Shipping Address
               </h2>
 
-              {/* Delivery Notice */}
               <div className="mb-8 p-4 bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-xl">
                 <p className="text-sm text-teal-800 dark:text-teal-300">
                   <strong>Delivery Information:</strong> We currently deliver
@@ -135,7 +166,7 @@ const Checkout = () => {
                     required
                     value={formData.fullName}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
                   />
                 </div>
                 <div>
@@ -147,9 +178,12 @@ const Checkout = () => {
                     name="email"
                     required
                     value={formData.email}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
+                    readOnly
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-400 cursor-not-allowed"
                   />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Email is taken from your authenticated account.
+                  </p>
                 </div>
                 <div>
                   <label className="block font-semibold mb-2 text-gray-900 dark:text-white">
@@ -161,7 +195,7 @@ const Checkout = () => {
                     required
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
                   />
                 </div>
                 <div>
@@ -174,7 +208,7 @@ const Checkout = () => {
                     required
                     value={formData.address}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -187,11 +221,7 @@ const Checkout = () => {
                       required
                       value={formData.city}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors ${
-                        cityError
-                          ? "border-red-500 dark:border-red-500"
-                          : "border-gray-300 dark:border-gray-700"
-                      }`}
+                      className={`w-full px-4 py-3 border rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-white ${cityError ? "border-red-500" : "border-gray-300 dark:border-gray-700"}`}
                     >
                       <option value="">Select City</option>
                       <option value="Kathmandu">Kathmandu</option>
@@ -213,8 +243,8 @@ const Checkout = () => {
                       required
                       value={formData.state}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
                       placeholder="e.g., Bagmati, Gandaki"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
                     />
                   </div>
                 </div>
@@ -229,7 +259,7 @@ const Checkout = () => {
                       required
                       value={formData.postalCode}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
                     />
                   </div>
                   <div>
@@ -239,11 +269,56 @@ const Checkout = () => {
                     <input
                       type="text"
                       name="country"
-                      required
-                      value={formData.country}
+                      value="Nepal"
                       readOnly
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 cursor-not-allowed"
                     />
+                  </div>
+                </div>
+
+                <div className="pt-4">
+                  <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+                    Payment Method
+                  </h2>
+                  <div className="space-y-3">
+                    <label
+                      className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer ${paymentMethod === "paypal" ? "border-primary bg-teal-50 dark:bg-teal-900/20" : "border-gray-200 dark:border-gray-700"}`}
+                    >
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="paypal"
+                        checked={paymentMethod === "paypal"}
+                        onChange={() => setPaymentMethod("paypal")}
+                      />
+                      <div>
+                        <p className="font-semibold text-gray-900 dark:text-white">
+                          PayPal Sandbox
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Pay securely through the PayPal test environment.
+                        </p>
+                      </div>
+                    </label>
+                    <label
+                      className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer ${paymentMethod === "cash_on_delivery" ? "border-primary bg-teal-50 dark:bg-teal-900/20" : "border-gray-200 dark:border-gray-700"}`}
+                    >
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="cash_on_delivery"
+                        checked={paymentMethod === "cash_on_delivery"}
+                        onChange={() => setPaymentMethod("cash_on_delivery")}
+                      />
+                      <div>
+                        <p className="font-semibold text-gray-900 dark:text-white">
+                          Cash on Delivery
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Pay when your order is delivered.
+                        </p>
+                      </div>
+                    </label>
                   </div>
                 </div>
               </div>
@@ -262,19 +337,29 @@ const Checkout = () => {
                 </div>
                 <div className="flex justify-between text-gray-600 dark:text-gray-400">
                   <span>Shipping</span>
-                  <span className="font-medium">Rs50</span>
+                  <span className="font-medium">Rs{SHIPPING_FEE}</span>
                 </div>
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-4 flex justify-between font-bold text-lg text-gray-900 dark:text-white">
                   <span>Total</span>
-                  <span className="text-primary">Rs{totalPrice + 50}</span>
+                  <span className="text-primary">
+                    Rs{totalPrice + SHIPPING_FEE}
+                  </span>
                 </div>
               </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                Final prices, shipping, tax, stock and payment amount are
+                validated by the server.
+              </p>
               <button
                 type="submit"
-                disabled={loading}
-                className="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:bg-secondary transition-all duration-200 disabled:opacity-50 shadow-md hover:shadow-lg"
+                disabled={loading || cart.length === 0}
+                className="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:bg-secondary transition-all duration-200 disabled:opacity-50 shadow-md"
               >
-                {loading ? "Processing..." : "Place Order"}
+                {loading
+                  ? "Processing..."
+                  : paymentMethod === "paypal"
+                    ? "Continue to PayPal"
+                    : "Place Order"}
               </button>
             </div>
           </div>

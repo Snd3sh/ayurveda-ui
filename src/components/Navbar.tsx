@@ -133,6 +133,21 @@ const Navbar = () => {
                 <span className="absolute left-4 right-4 -bottom-0.5 h-0.5 rounded-full bg-primary animate-fade-in" />
               )}
             </Link>
+            {authState?.authenticated && (
+              <Link
+                to="/my-orders"
+                className={`relative px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
+                  isActive("/my-orders")
+                    ? "text-primary"
+                    : "text-gray-700 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                }`}
+              >
+                My Orders
+                {isActive("/my-orders") && (
+                  <span className="absolute left-4 right-4 -bottom-0.5 h-0.5 rounded-full bg-primary animate-fade-in" />
+                )}
+              </Link>
+            )}
             <Link
               to="/about"
               className={`relative px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
@@ -223,6 +238,13 @@ const Navbar = () => {
                         </span>
                       )}
                     </div>
+                    <Link
+                      to="/my-orders"
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      My Orders
+                    </Link>
                     {authState.isAdmin && (
                       <Link
                         to="/admin/dashboard"
@@ -303,6 +325,15 @@ const Navbar = () => {
             >
               Track Order
             </Link>
+            {authState?.authenticated && (
+              <Link
+                to="/my-orders"
+                className="block text-gray-700 dark:text-gray-300 hover:text-primary transition-colors px-2 py-1"
+                onClick={() => setIsOpen(false)}
+              >
+                My Orders
+              </Link>
+            )}
             <Link
               to="/about"
               className="block text-gray-700 dark:text-gray-300 hover:text-primary transition-colors px-2 py-1"
@@ -349,6 +380,13 @@ const Navbar = () => {
                       </p>
                     </div>
                   </div>
+                  <Link
+                    to="/my-orders"
+                    className="block text-gray-700 dark:text-gray-300 hover:text-primary transition-colors px-2 py-1 mb-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    My Orders
+                  </Link>
                   {authState.isAdmin && (
                     <Link
                       to="/admin/dashboard"
